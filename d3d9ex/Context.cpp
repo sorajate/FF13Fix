@@ -215,11 +215,18 @@ void MainContext::ApplyWindow(HWND hWnd)
 		insertAfter = HWND_TOPMOST;
 
 	SetWindowPos(hWnd, insertAfter, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOCOPYBITS | SWP_NOSENDCHANGING);
-	SetFocus(hWnd);
 
 	// fixes DXVK window in background, no need to click anymore
+	// update: this works little worse but it not disable mouse input
 	if (context.IsDXVK())
+	{
+		RECT r;
+		GetWindowRect(hWnd, &r);
+		ClipCursor(&r);
 		SetForegroundWindow(hWnd);
+	}
+	else
+		SetFocus(hWnd);
 
 	if (config.GetOptionsAlwaysActive() || config.GetOptionsHideCursor() || IsDXVK())
 	{
